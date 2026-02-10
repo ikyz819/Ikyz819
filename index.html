@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Access Denied</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+        
+        body {
+            background: #000;
+            color: #ff0000;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+            background-image: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(255, 0, 0, 0.05) 2px,
+                    rgba(255, 0, 0, 0.05) 4px
+                );
+        }
+        
+        .access-denied {
+            max-width: 800px;
+            width: 100%;
+            border: 2px solid #ff0000;
+            padding: 40px 20px;
+            box-shadow: 0 0 50px rgba(255, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .access-denied::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #ff0000, transparent);
+            animation: scanline 2s linear infinite;
+        }
+        
+        @keyframes scanline {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            text-shadow: 0 0 10px #ff0000;
+        }
+        
+        h2 {
+            font-size: 1.5rem;
+            color: #ff6666;
+            margin-bottom: 30px;
+            font-weight: normal;
+        }
+        
+        .error-code {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid #ff0000;
+            padding: 15px;
+            margin: 20px 0;
+            font-family: monospace;
+            text-align: left;
+            overflow-x: auto;
+        }
+        
+        .blink {
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        .footer {
+            margin-top: 30px;
+            color: #660000;
+            font-size: 0.8rem;
+        }
+        
+        /* Hidden raw endpoint indicator */
+        .raw-indicator {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            color: #00ff00;
+            font-size: 0.7rem;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+    <div class="access-denied">
+        <h1>SYSTEM LOCKDOWN</h1>
+        <h2>ACCESS VIOLATION DETECTED</h2>
+        
+        <div class="error-code">
+            <div>> ERROR CODE: 0x0000A3F2</div>
+            <div>> SECURITY LEVEL: MAXIMUM</div>
+            <div>> IP LOGGED: <span id="ipDisplay">[REDACTED]</span></div>
+            <div>> TIMESTAMP: <span id="timestamp">--:--:-- UTC</span></div>
+            <div>> STATUS: <span class="blink">UNAUTHORIZED</span></div>
+        </div>
+        
+        <p style="margin: 20px 0; color: #ff8888;">
+            This terminal is restricted to authorized personnel only.<br>
+            All access attempts are being monitored and logged.
+        </p>
+        
+        <div style="border-top: 1px solid #660000; padding-top: 20px;">
+            <p style="color: #660000; font-size: 0.9rem;">
+                > Security Protocol Alpha-7 Active<br>
+                > Connection Terminated
+            </p>
+        </div>
+        
+        <div class="footer">
+            © Secure Terminal v3.2 | Access Violation #<span id="violationCount">0000</span>
+        </div>
+    </div>
+    
+    <div class="raw-indicator" id="rawIndicator">
+        RAW: /loader | /loadstring | /source
+    </div>
+
+    <script>
+        // Get user IP
+        fetch('https://api.ipify.org?format=json')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('ipDisplay').textContent = data.ip;
+                
+                // Log access attempt
+                let violations = localStorage.getItem('violations') || 0;
+                violations++;
+                localStorage.setItem('violations', violations);
+                document.getElementById('violationCount').textContent = 
+                    violations.toString().padStart(4, '0');
+            })
+            .catch(() => {
+                document.getElementById('ipDisplay').textContent = '[UNABLE TO DETERMINE]';
+            });
+        
+        // Update timestamp
+        function updateTime() {
+            const now = new Date();
+            const timeStr = now.toISOString().split('T')[1].split('.')[0] + ' UTC';
+            document.getElementById('timestamp').textContent = timeStr;
+        }
+        
+        setInterval(updateTime, 1000);
+        updateTime();
+        
+        // Initialize violation count
+        window.onload = function() {
+            let violations = localStorage.getItem('violations') || 0;
+            if (!violations) {
+                violations = Math.floor(Math.random() * 500) + 100;
+                localStorage.setItem('violations', violations);
+            }
+            document.getElementById('violationCount').textContent = 
+                violations.toString().padStart(4, '0');
+        };
+    </script>
+</body>
+</html>
