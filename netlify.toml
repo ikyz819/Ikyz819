@@ -1,0 +1,9 @@
+[[headers]]
+  for = "/loader"
+  [headers.values]
+    "Content-Type" = "text/plain"
+
+[[headers]]
+  for = "/loadstring"
+  [headers.values]
+    "Content-Type" = "text/plain"
