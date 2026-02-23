@@ -181,11 +181,8 @@ function Library:New(config)
 	})
 
 	-- Floating bubble: shown when UI is minimized, draggable on mobile
-	local Bubble = Create("TextButton", {
-		Text = "≡",
-		Font = Enum.Font.GothamBold,
-		TextSize = 20,
-		TextColor3 = Color3.fromRGB(200, 200, 255),
+	local Bubble = Create("ImageButton", {
+		Image = config.Icon, -- replace with your image id
 		BackgroundColor3 = Color3.fromRGB(15, 15, 20),
 		Size = UDim2.fromOffset(52, 52),
 		Position = UDim2.new(0, 326, 0, -38),
@@ -194,7 +191,6 @@ function Library:New(config)
 		Parent = self.Gui
 	}, {
 		Create("UICorner", {CornerRadius = UDim.new(0, 14)}),
-		Create("UIStroke", {Color = Color3.fromRGB(80, 150, 255), Thickness = 1.5})
 	})
 
 	-- Make bubble draggable (touch + mouse)
@@ -230,7 +226,6 @@ function Library:New(config)
 			if not moved then self:ToggleUI() end
 		end)
 	end
-
 
 	self.Sidebar = Create("Frame", {
 		Size = UDim2.new(0, 150, 1, -16),
